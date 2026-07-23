@@ -9,38 +9,34 @@ jobs:
 
     env:
       API: 21
-      NDK_VERSION: 27.2.12479018
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install packages
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install NDK
+        run: |
+          sdkmanager "ndk;27.2.12479018"
+
+      - name: Set NDK Path
+        run: |
+          echo "ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/27.2.12479018" >> $GITHUB_ENV
+
+      - name: Install build tools
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            autoconf \
-            automake \
             build-essential \
-            cmake \
-            git \
-            libtool \
             pkg-config \
-            texinfo \
             yasm \
-            nasm \
-            unzip \
-            wget
-
-      - name: Download Android NDK
-        run: |
-          wget -q https://dl.google.com/android/repository/android-ndk-${NDK_VERSION}-linux.zip
-          unzip -q android-ndk-${NDK_VERSION}-linux.zip
-          echo "ANDROID_NDK=$PWD/android-ndk-${NDK_VERSION}" >> $GITHUB_ENV
+            nasm
 
       - name: Configure
         run: |
-          export TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64
+          TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64
 
           ./configure \
             --prefix=$PWD/out \
@@ -49,8 +45,8 @@ jobs:
             --cpu=armv7-a \
             --enable-cross-compile \
             --sysroot=$TOOLCHAIN/sysroot \
-            --cc=$TOOLCHAIN/bin/armv7a-linux-androideabi${API}-clang \
-            --cxx=$TOOLCHAIN/bin/armv7a-linux-androideabi${API}-clang++ \
+            --cc=$TOOLCHAIN/bin/armv7a-linux-androideabi21-clang \
+            --cxx=$TOOLCHAIN/bin/armv7a-linux-androideabi21-clang++ \
             --ar=$TOOLCHAIN/bin/llvm-ar \
             --ranlib=$TOOLCHAIN/bin/llvm-ranlib \
             --strip=$TOOLCHAIN/bin/llvm-strip \
@@ -58,8 +54,7 @@ jobs:
             --disable-shared \
             --enable-static \
             --disable-debug \
-            --disable-doc \
-            --enable-pic
+            --disable-doc
 
       - name: Build
         run: |
@@ -69,11 +64,7 @@ jobs:
         run: |
           make install
 
-      - name: Show output
-        run: |
-          ls -R out
-
-      - name: Upload executable
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: ffmpeg-armv7
