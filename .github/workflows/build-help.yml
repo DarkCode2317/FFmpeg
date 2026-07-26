@@ -6,5 +6,7 @@ on:
 jobs:
 
   help:
+    runs-on: ubuntu-latest
     steps:
-      - name: help
+      - name: Checkout
+        use:
