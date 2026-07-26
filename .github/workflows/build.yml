@@ -176,3 +176,10 @@ jobs:
           fi
           
           cat > build-output/README.md << 'EOFMD'
+      - name: Upload all artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ffmpeg-android-${{ env.ARCH_SUFFIX }}-api${{ env.API_LEVEL }}
+          path: build-output/
+          retention-days: 30
+          if-no-files-found: error
