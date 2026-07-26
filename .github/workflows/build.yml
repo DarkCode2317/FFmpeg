@@ -1,14 +1,38 @@
-name: Build FFmpeg Android ARMv7
+name: Build FFmpeg Android Native Excuatable Files
 
 on:
   workflow_dispatch:
+    inputs:
+      arch:
+        description: 'Target architecture'
+        required: true
+        default: 'armv7-a'
+        type: choice
+        options:
+          - armv7-a
+          - arm64-v8a
+          - x86
+          - x86_64
+      api_level:
+        description: 'Android API Level'
+        required: true
+        default: '21'
+        type: choice
+        options:
+          - '21'
+          - '24'
+          - '28'
+          - '29'
+          - '30'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     env:
-      API: 21
+      NDK_VERSION: "27.2.12479018"
+      API_LEVEL: ${{ inputs.api_level || '21' }}
+      TARGET_ARCH: ${{ inputs.arch || 'armv7-a' }}
 
     steps:
       - name: Checkout
@@ -19,11 +43,11 @@ jobs:
 
       - name: Install NDK
         run: |
-          sdkmanager "ndk;27.2.12479018"
+          sdkmanager "ndk;$NDK_VERSION"
 
       - name: Set NDK Path
         run: |
-          echo "ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/27.2.12479018" >> $GITHUB_ENV
+          echo "ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/$NDK_VERSION" >> $GITHUB_ENV
 
       - name: Install build tools
         run: |
@@ -34,19 +58,48 @@ jobs:
             yasm \
             nasm
 
-      - name: Configure
+      - name: Determine arch settings
+        run: |
+          case "${{ env.TARGET_ARCH }}" in
+            armv7-a)
+              echo "ARCH=arm" >> $GITHUB_ENV
+              echo "CPU=armv7-a" >> $GITHUB_ENV
+              echo "CROSS_PREFIX=armv7a-linux-androideabi" >> $GITHUB_ENV
+              echo "ARCH_SUFFIX=armv7" >> $GITHUB_ENV
+              ;;
+            arm64-v8a)
+              echo "ARCH=aarch64" >> $GITHUB_ENV
+              echo "CPU=cortex-a53" >> $GITHUB_ENV
+              echo "CROSS_PREFIX=aarch64-linux-android" >> $GITHUB_ENV
+              echo "ARCH_SUFFIX=arm64" >> $GITHUB_ENV
+              ;;
+            x86)
+              echo "ARCH=x86" >> $GITHUB_ENV
+              echo "CPU=i686" >> $GITHUB_ENV
+              echo "CROSS_PREFIX=i686-linux-android" >> $GITHUB_ENV
+              echo "ARCH_SUFFIX=x86" >> $GITHUB_ENV
+              ;;
+            x86_64)
+              echo "ARCH=x86_64" >> $GITHUB_ENV
+              echo "CPU=x86-64" >> $GITHUB_ENV
+              echo "CROSS_PREFIX=x86_64-linux-android" >> $GITHUB_ENV
+              echo "ARCH_SUFFIX=x86_64" >> $GITHUB_ENV
+              ;;
+          esac
+
+      - name: Configure FFmpeg
         run: |
           TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64
-
+          
           ./configure \
             --prefix=$PWD/out \
             --target-os=android \
-            --arch=arm \
-            --cpu=armv7-a \
+            --arch=${{ env.ARCH }} \
+            --cpu=${{ env.CPU }} \
             --enable-cross-compile \
             --sysroot=$TOOLCHAIN/sysroot \
-            --cc=$TOOLCHAIN/bin/armv7a-linux-androideabi21-clang \
-            --cxx=$TOOLCHAIN/bin/armv7a-linux-androideabi21-clang++ \
+            --cc=$TOOLCHAIN/bin/${{ env.CROSS_PREFIX }}${{ env.API_LEVEL }}-clang \
+            --cxx=$TOOLCHAIN/bin/${{ env.CROSS_PREFIX }}${{ env.API_LEVEL }}-clang++ \
             --ar=$TOOLCHAIN/bin/llvm-ar \
             --ranlib=$TOOLCHAIN/bin/llvm-ranlib \
             --strip=$TOOLCHAIN/bin/llvm-strip \
@@ -54,20 +107,72 @@ jobs:
             --disable-shared \
             --enable-static \
             --disable-debug \
-            --disable-doc
+            --disable-doc \
+            --disable-programs \
+            --enable-ffmpeg \
+            --enable-ffprobe \
+            --disable-ffplay \
+            --enable-small \
+            --disable-network
 
-      - name: Build
+      - name: Build FFmpeg libraries and tools
         run: |
           make -j$(nproc)
 
-      - name: Install
+      - name: Build ffprobe executable
         run: |
-          make install
+          make ffprobe_g
 
-      - name: Upload
-        uses: actions/upload-artifact@v4
-        with:
-          name: ffmpeg-armv7
-          path: |
-            ffmpeg
-            ffprobe
+      - name: Build ffmpeg executable
+        run: |
+          make ffmpeg_g
+
+      - name: Manually build qt-faststart
+        run: |
+          TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64
+          CC=$TOOLCHAIN/bin/${{ env.CROSS_PREFIX }}${{ env.API_LEVEL }}-clang
+          
+          $CC \
+            -O2 \
+            -fPIE \
+            -pie \
+            -o tools/qt-faststart \
+            tools/qt-faststart.c
+          
+          echo "qt-faststart build completed"
+
+      - name: Strip binaries
+        run: |
+          TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64
+          STRIP=$TOOLCHAIN/bin/llvm-strip
+          
+          [ -f ffmpeg_g ] && $STRIP --strip-all ffmpeg_g && echo "Stripped ffmpeg_g" || true
+          [ -f ffprobe_g ] && $STRIP --strip-all ffprobe_g && echo "Stripped ffprobe_g" || true
+          [ -f tools/qt-faststart ] && $STRIP --strip-all tools/qt-faststart && echo "Stripped qt-faststart" || true
+          
+          echo "=== Final Binary Sizes ==="
+          ls -lh ffmpeg_g ffprobe_g tools/qt-faststart 2>/dev/null || true
+
+      - name: Prepare output
+        run: |
+          mkdir -p build-output
+          
+          if [ -f ffmpeg_g ]; then
+            cp ffmpeg_g build-output/ffmpeg
+            chmod +x build-output/ffmpeg
+            echo "✓ ffmpeg copied"
+          fi
+          
+          if [ -f ffprobe_g ]; then
+            cp ffprobe_g build-output/ffprobe
+            chmod +x build-output/ffprobe
+            echo "✓ ffprobe copied"
+          fi
+          
+          if [ -f tools/qt-faststart ]; then
+            cp tools/qt-faststart build-output/qt-faststart
+            chmod +x build-output/qt-faststart
+            echo "✓ qt-faststart copied"
+          fi
+          
+          cat > build-output/README.md << 'EOFMD'
