@@ -13,4 +13,4 @@ jobs:
 
       - name: Help
         run: |
-          
+          ./configure --help
