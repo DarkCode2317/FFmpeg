@@ -118,7 +118,6 @@ jobs:
             --disable-debug \
             --disable-doc \
             --disable-ffplay \
-            \
             --enable-libx264 \
             --enable-libx265 \
             --enable-libdav1d \
@@ -143,7 +142,6 @@ jobs:
     --enable-libsoxr \
     --enable-librubberband \
     --enable-libvidstab \
-    \
     --enable-libbluray \
     --enable-libdvdnav \
     --enable-libdvdread \
