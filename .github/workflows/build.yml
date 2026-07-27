@@ -94,7 +94,7 @@ jobs:
       - name: Configure FFmpeg
         run: |
 
-              TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64
+          TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64
           
           ./configure \
             --prefix=$PWD/out \
