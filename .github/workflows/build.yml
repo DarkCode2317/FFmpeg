@@ -9,10 +9,10 @@ on:
         default: 'armv7-a'
         type: choice
         options:
-          - armv7-a
-          - arm64-v8a
-          - x86
-          - x86_64
+          - 'armv7-a'
+          - 'arm64-v8a'
+          - 'x86'
+          - 'x86_64'
       api_level:
         description: 'Android API Level'
         required: true
