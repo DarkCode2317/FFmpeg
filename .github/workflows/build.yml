@@ -66,24 +66,28 @@ jobs:
               echo "CPU=armv7-a" >> $GITHUB_ENV
               echo "CROSS_PREFIX=armv7a-linux-androideabi" >> $GITHUB_ENV
               echo "ARCH_SUFFIX=armv7" >> $GITHUB_ENV
+              echo "NEON=--enable-neon" >> $GITHUB_ENV
               ;;
             arm64-v8a)
               echo "ARCH=aarch64" >> $GITHUB_ENV
               echo "CPU=cortex-a53" >> $GITHUB_ENV
               echo "CROSS_PREFIX=aarch64-linux-android" >> $GITHUB_ENV
               echo "ARCH_SUFFIX=arm64" >> $GITHUB_ENV
+              echo "NEON=--enable-neon" >> $GITHUB_ENV
               ;;
             x86)
               echo "ARCH=x86" >> $GITHUB_ENV
               echo "CPU=i686" >> $GITHUB_ENV
               echo "CROSS_PREFIX=i686-linux-android" >> $GITHUB_ENV
               echo "ARCH_SUFFIX=x86" >> $GITHUB_ENV
+              echo "NEON=" >> $GITHUB_ENV
               ;;
             x86_64)
               echo "ARCH=x86_64" >> $GITHUB_ENV
               echo "CPU=x86-64" >> $GITHUB_ENV
               echo "CROSS_PREFIX=x86_64-linux-android" >> $GITHUB_ENV
               echo "ARCH_SUFFIX=x86_64" >> $GITHUB_ENV
+              echo "NEON=" >> $GITHUB_ENV
               ;;
           esac
 
@@ -106,6 +110,7 @@ jobs:
             --nm=$TOOLCHAIN/bin/llvm-nm \
             --enable-gpl \
             --enable-version3 \
+            ${{ env.NEON }} \
             --enable-jni \
             --enable-mediacodec \
             --enable-lto \
