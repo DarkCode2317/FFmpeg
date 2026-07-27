@@ -3,7 +3,7 @@ name: Build FFmpeg Android Native Excuatable Files
 on:
   push:
     branches:
-      - main
+      - master
   workflow_dispatch:
     inputs:
       arch:
