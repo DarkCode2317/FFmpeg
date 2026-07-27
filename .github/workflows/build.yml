@@ -1,6 +1,9 @@
 name: Build FFmpeg Android Native Excuatable Files
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       arch:
@@ -132,7 +135,6 @@ jobs:
             --enable-libmp3lame \
             --enable-libopus \
             --enable-libvorbis \
-            --enable-libflac \
            --enable-libopencore-amrnb \
            --enable-libopencore-amrwb \
           --enable-libvo-amrwbenc \
