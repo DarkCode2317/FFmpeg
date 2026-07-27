@@ -146,45 +146,43 @@ jobs:
     --enable-libdvdnav \
     --enable-libdvdread \
     --enable-libxml2
+
       - name: Build FFmpeg
         run: |
           make -j$(nproc)
 
       - name: Strip binaries
         run: |
-          TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64
-          STRIP=$TOOLCHAIN/bin/llvm-strip
-          
-          [ -f ffmpeg_g ] && $STRIP --strip-all ffmpeg_g && echo "Stripped ffmpeg_g" || true
-          [ -f ffprobe_g ] && $STRIP --strip-all ffprobe_g && echo "Stripped ffprobe_g" || true
-          [ -f tools/qt-faststart ] && $STRIP --strip-all tools/qt-faststart && echo "Stripped qt-faststart" || true
-          
+
+TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64
+         STRIP=$TOOLCHAIN/bin/llvm-strip
+
+          [ -f ffmpeg ] && $STRIP --strip-all ffmpeg && echo "Stripped ffmpeg" || true
+          [ -f ffprobe ] && $STRIP --strip-all ffprobe && echo "Stripped ffprobe" || true
+
           echo "=== Final Binary Sizes ==="
-          ls -lh ffmpeg_g ffprobe_g tools/qt-faststart 2>/dev/null || true
+          ls -lh ffmpeg ffprobe 2>/dev/null || true
 
       - name: Prepare output
         run: |
           mkdir -p build-output
-          
-          if [ -f ffmpeg_g ]; then
-            cp ffmpeg_g build-output/ffmpeg
+
+          if [ -f ffmpeg ]; then
+            cp ffmpeg build-output/ffmpeg
             chmod +x build-output/ffmpeg
-            echo "✓ ffmpeg copied"
+            echo "ffmpeg copied!"
           fi
-          
-          if [ -f ffprobe_g ]; then
-            cp ffprobe_g build-output/ffprobe
+
+          if [ -f ffprobe ]; then
+            cp ffprobe build-output/ffprobe
             chmod +x build-output/ffprobe
-            echo "✓ ffprobe copied"
+            echo "ffprobe copied!"
           fi
-          
-          if [ -f tools/qt-faststart ]; then
-            cp tools/qt-faststart build-output/qt-faststart
-            chmod +x build-output/qt-faststart
-            echo "✓ qt-faststart copied"
-          fi
-          
+
           cat > build-output/README.md << 'EOFMD'
+          FFmpeg Android native executable build
+          EOFMD
+
       - name: Upload all artifacts
         uses: actions/upload-artifact@v4
         with:
