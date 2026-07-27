@@ -108,7 +108,6 @@ jobs:
             --enable-version3 \
             --enable-jni \
             --enable-mediacodec \
-            --enable-neon \
             --enable-lto \
             \
             --disable-network \
