@@ -146,31 +146,9 @@ jobs:
     --enable-libdvdnav \
     --enable-libdvdread \
     --enable-libxml2
-      - name: Build FFmpeg libraries and tools
+      - name: Build FFmpeg
         run: |
           make -j$(nproc)
-
-      - name: Build ffprobe executable
-        run: |
-          make ffprobe_g
-
-      - name: Build ffmpeg executable
-        run: |
-          make ffmpeg_g
-
-      - name: Manually build qt-faststart
-        run: |
-          TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64
-          CC=$TOOLCHAIN/bin/${{ env.CROSS_PREFIX }}${{ env.API_LEVEL }}-clang
-          
-          $CC \
-            -O2 \
-            -fPIE \
-            -pie \
-            -o tools/qt-faststart \
-            tools/qt-faststart.c
-          
-          echo "qt-faststart build completed"
 
       - name: Strip binaries
         run: |
