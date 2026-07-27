@@ -133,22 +133,22 @@ jobs:
             --enable-libopus \
             --enable-libvorbis \
             --enable-libflac \
-     --enable-libopencore-amrnb \
-     --enable-libopencore-amrwb \
-    --enable-libvo-amrwbenc \
-    --enable-libass \
-    --enable-libfreetype \
-    --enable-libfontconfig \
-    --enable-libharfbuzz \
-    --enable-libfribidi \
-    --enable-libzimg \
-    --enable-libsoxr \
-    --enable-librubberband \
-    --enable-libvidstab \
-    --enable-libbluray \
-    --enable-libdvdnav \
-    --enable-libdvdread \
-    --enable-libxml2
+           --enable-libopencore-amrnb \
+           --enable-libopencore-amrwb \
+          --enable-libvo-amrwbenc \
+            --enable-libass \
+            --enable-libfreetype \
+           --enable-libfontconfig \
+            --enable-libharfbuzz \
+            --enable-libfribidi \
+            --enable-libzimg \
+            --enable-libsoxr \
+            --enable-librubberband \
+            --enable-libvidstab \
+            --enable-libbluray \
+            --enable-libdvdnav \
+            --enable-libdvdread \
+            --enable-libxml2
 
       - name: Build FFmpeg
         run: |
