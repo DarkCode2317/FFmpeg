@@ -104,25 +104,16 @@ jobs:
             --ranlib=$TOOLCHAIN/bin/llvm-ranlib \
             --strip=$TOOLCHAIN/bin/llvm-strip \
             --nm=$TOOLCHAIN/bin/llvm-nm \
-            --disable-shared \
-            --enable-static \
-            \
-            --disable-debug \
-            --disable-doc \
-            --enable-small \
-            --enable-lto \
-            \
             --enable-gpl \
             --enable-version3 \
-            \
             --enable-jni \
             --enable-mediacodec \
             --enable-neon \
+            --enable-lto \
             \
             --disable-network \
-            \
-            --enable-ffmpeg \
-            --enable-ffprobe \
+            --disable-debug \
+            --disable-doc \
             --disable-ffplay \
             \
             --enable-libx264 \
@@ -139,7 +130,7 @@ jobs:
             --enable-libvorbis \
             --enable-libflac \
      --enable-libopencore-amrnb \
-    --enable-libopencore-amrwb \
+     --enable-libopencore-amrwb \
     --enable-libvo-amrwbenc \
     \
     --enable-libass \
@@ -157,7 +148,6 @@ jobs:
     --enable-libdvdnav \
     --enable-libdvdread \
     --enable-libxml2
-
       - name: Build FFmpeg libraries and tools
         run: |
           make -j$(nproc)
