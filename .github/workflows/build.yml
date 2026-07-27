@@ -93,7 +93,8 @@ jobs:
 
       - name: Configure FFmpeg
         run: |
-          TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64
+
+              TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64
           
           ./configure \
             --prefix=$PWD/out \
@@ -108,10 +109,12 @@ jobs:
             --ranlib=$TOOLCHAIN/bin/llvm-ranlib \
             --strip=$TOOLCHAIN/bin/llvm-strip \
             --nm=$TOOLCHAIN/bin/llvm-nm \
+            --disable-shared \
+            --enable-static \
             --enable-gpl \
             --enable-version3 \
             ${{ env.NEON }} \
-            --enable-jni \
+            --enable-pthreads \
             --enable-mediacodec \
             --enable-lto \
             --disable-network \
@@ -153,9 +156,8 @@ jobs:
 
       - name: Strip binaries
         run: |
-
-TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64
-         STRIP=$TOOLCHAIN/bin/llvm-strip
+          TOOLCHAIN=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64
+          STRIP=$TOOLCHAIN/bin/llvm-strip
 
           [ -f ffmpeg ] && $STRIP --strip-all ffmpeg && echo "Stripped ffmpeg" || true
           [ -f ffprobe ] && $STRIP --strip-all ffprobe && echo "Stripped ffprobe" || true
