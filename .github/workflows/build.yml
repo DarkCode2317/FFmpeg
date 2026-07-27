@@ -114,7 +114,6 @@ jobs:
             --enable-jni \
             --enable-mediacodec \
             --enable-lto \
-            \
             --disable-network \
             --disable-debug \
             --disable-doc \
@@ -128,7 +127,6 @@ jobs:
             --enable-libvpx \
             --enable-libwebp \
             --enable-libopenjpeg \
-            \
             --enable-libmp3lame \
             --enable-libopus \
             --enable-libvorbis \
@@ -136,13 +134,11 @@ jobs:
      --enable-libopencore-amrnb \
      --enable-libopencore-amrwb \
     --enable-libvo-amrwbenc \
-    \
     --enable-libass \
     --enable-libfreetype \
     --enable-libfontconfig \
     --enable-libharfbuzz \
     --enable-libfribidi \
-    \
     --enable-libzimg \
     --enable-libsoxr \
     --enable-librubberband \
