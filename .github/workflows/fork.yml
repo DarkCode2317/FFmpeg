@@ -1,0 +1,35 @@
+name: Sync FFmpeg Release Branch
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: "Upstream branch (e.g. release/9.0)"
+        required: true
+        default: "release/9.0"
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Add upstream
+        run: |
+          git remote add upstream https://github.com/FFmpeg/FFmpeg.git
+          git fetch upstream --prune
+
+      - name: Create/update branch
+        run: |
+          git checkout -B "${{ inputs.branch }}" "upstream/${{ inputs.branch }}"
+
+      - name: Push to fork
+        run: |
+          git push origin "${{ inputs.branch }}" --force
