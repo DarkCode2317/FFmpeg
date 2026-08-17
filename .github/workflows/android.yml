@@ -7,56 +7,38 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      MIN_API: 21
-      ANDROID_NDK: ${{ env.ANDROID_NDK_LATEST_HOME }}
-
     steps:
       - name: Checkout FFmpeg
         uses: actions/checkout@v4
 
-      - name: Show toolchain
-        run: |
-          echo "ANDROID_HOME=$ANDROID_HOME"
-          echo "ANDROID_NDK=$ANDROID_NDK"
-          echo "MIN_API=$MIN_API"
-          cat "$ANDROID_NDK/source.properties"
-
       - name: Configure FFmpeg
         run: |
-          TOOLCHAIN="$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64"
+          TOOLCHAIN="$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64"
 
           ./configure \
             --target-os=android \
             --arch=arm \
             --cpu=armv7-a \
             --enable-cross-compile \
-            --cc="$TOOLCHAIN/bin/armv7a-linux-androideabi${MIN_API}-clang" \
-            --cxx="$TOOLCHAIN/bin/armv7a-linux-androideabi${MIN_API}-clang++" \
+            --cc="$TOOLCHAIN/bin/armv7a-linux-androideabi21-clang" \
+            --cxx="$TOOLCHAIN/bin/armv7a-linux-androideabi21-clang++" \
             --nm="$TOOLCHAIN/bin/llvm-nm" \
             --ar="$TOOLCHAIN/bin/llvm-ar" \
             --ranlib="$TOOLCHAIN/bin/llvm-ranlib" \
             --strip="$TOOLCHAIN/bin/llvm-strip" \
-            --sysroot="$TOOLCHAIN/sysroot" \
-            --extra-cflags="-march=armv7-a -mfloat-abi=softfp -mfpu=neon" \
-            --extra-ldflags="-fPIE" \
-            --extra-ldexeflags="-pie" \
-            --enable-neon \
-            --disable-ffplay \
-            --disable-ffprobe \
-            --disable-doc \
-            --disable-debug
+            --sysroot="$TOOLCHAIN/sysroot"
 
       - name: Build FFmpeg
         run: |
           make -j"$(nproc)"
 
-      - name: Verify
+      - name: Verify FFmpeg
         run: |
           file ffmpeg
           ls -lh ffmpeg
 
       - name: Upload FFmpeg
+        if: false
         uses: actions/upload-artifact@v4
         with:
           name: ffmpeg-android-armv7
