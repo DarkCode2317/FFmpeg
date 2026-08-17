@@ -1,4 +1,4 @@
-name: Check Android SDK and NDK
+name: Test
 
 on:
   workflow_dispatch:
