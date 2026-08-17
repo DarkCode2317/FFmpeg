@@ -36,7 +36,10 @@ jobs:
           --disable-outdevs \
           --disable-devices \
           --disable-postproc \
-          --disable-network
+          --disable-network \
+          --disable-cuda-llvm
+          --disable-v4l2-m2m \
+          --enable-mediacodec
 
       - name: Build FFmpeg
         run: |
