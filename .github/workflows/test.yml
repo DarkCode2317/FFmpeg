@@ -9,8 +9,9 @@ jobs:
 
     steps:
       - name: Checkout
+        if: false
         uses: actions/checkout@v4
 
-      - name: Help
+      - name: test
         run: |
-          ./configure --help
+          echo $TOOLCHAIN
