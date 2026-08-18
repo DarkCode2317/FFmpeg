@@ -84,7 +84,8 @@ jobs:
           --enable-jni \
           --enable-mediacodec \
           --enable-gpl \
-          --enable-libx264 \ --extra-cflags="-I$X264_PREFIX/include" \
+          --enable-libx264 \
+          --extra-cflags="-I$X264_PREFIX/include" \
           --extra-ldflags="-L$X264_PREFIX/lib"
           
           make -j"$(nproc)"
