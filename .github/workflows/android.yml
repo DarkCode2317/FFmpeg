@@ -3,17 +3,56 @@ name: Build FFmpeg Android ARMv7
 on:
   workflow_dispatch:
 
+env:
+  ANDROID_API: 21
+  X264_PREFIX: ${{ github.workspace }}/x264-install
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout FFmpeg
         uses: actions/checkout@v4
 
-      - name: Configure FFmpeg
+      - name: Checkout x264
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/x264
+          ref: stable
+          path: x264
+
+      - name: Set environment
         run: |
-          TOOLCHAIN="$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64"
+          echo "TOOLCHAIN=$ANDROID_NDK_LATEST_HOME/toolchains/llvm/prebuilt/linux-x86_64" >> "$GITHUB_ENV"
+
+      - name: Build x264
+        working-directory: x264
+        run: |
+          ./configure \
+                      --host=arm-linux-androideabi \
+            --cross-prefix="$TOOLCHAIN/bin/armv7a-linux-androideabi${ANDROID_API}-" \
+            --sysroot="$TOOLCHAIN/sysroot" \
+            --prefix="$X264_PREFIX \
+            --enable-static \
+            --disable-cli \
+            --disable-opencl \
+            --disable-bashcompletion \
+            --disable-interlaced \
+            --bit-depth=8 \
+            --chroma-format=420 \
+            --enable-strip
+
+          make -j"$(nproc)"
+          make install
+
+      - name: Verify x264
+        run: |
+          find "$X264_PREFIX" -type f -exec ls -lh {} \;
+
+      - name: Build FFmpeg
+        if: false
+        run: |
 
           ./configure \
             --target-os=android \
@@ -37,15 +76,18 @@ jobs:
           --disable-devices \
           --disable-postproc \
           --disable-network \
-          --disable-cuda-llvm
+          --disable-cuda-llvm \
           --disable-v4l2-m2m \
-          --enable-mediacodec
-
-      - name: Build FFmpeg
-        run: |
+          --enable-mediacodec \
+          --extra-cflags="-I$X264_PREFIX/include" \
+          --extra-ldflags="-L$X264_PREFIX/lib" \
+            \
+          --enable-gpl \
+          --enable-libx264
           make -j"$(nproc)"
 
       - name: Verify FFmpeg
+        if: false
         run: |
           file ffmpeg
           ls -lh ffmpeg
