@@ -57,6 +57,21 @@ jobs:
         
         run: |
           export PKG_CONFIG_PATH="$X264_PREFIX/lib/pkgconfig"
+
+          echo "=== pkg-config ==="
+          which pkg-config
+          pkg-config --version
+
+          echo "=== PKG_CONFIG_PATH ==="
+          echo "$PKG_CONFIG_PATH"
+
+          echo "=== x264.pc ==="
+          cat "$X264_PREFIX/lib/pkgconfig/x264.pc"
+
+          echo "=== pkg-config x264 ==="
+          pkg-config --modversion x264
+          pkg-config --cflags x264
+          pkg-config --libs x264
           ./configure \
             --target-os=android \
             --arch=arm \
