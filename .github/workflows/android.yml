@@ -37,8 +37,8 @@ jobs:
           --enable-static \
           --disable-cli \
           --disable-opencl \
-            --disable-bashcompletion \
-            --disable-interlaced \
+          --disable-bashcompletion \
+          --disable-interlaced \
           --bit-depth=8 \
           --chroma-format=420 \
           --enable-strip
