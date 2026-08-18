@@ -33,15 +33,15 @@ jobs:
           --host=arm-linux-androideabi \
           --cross-prefix="$TOOLCHAIN/bin/armv7a-linux-androideabi${ANDROID_API}-" \
           --sysroot="$TOOLCHAIN/sysroot" \
-            --prefix="$X264_PREFIX \
+          --prefix="$X264_PREFIX \
           --enable-static \
           --disable-cli \
           --disable-opencl \
             --disable-bashcompletion \
             --disable-interlaced \
-            --bit-depth=8 \
-            --chroma-format=420 \
-            --enable-strip
+          --bit-depth=8 \
+          --chroma-format=420 \
+          --enable-strip
 
           make -j"$(nproc)"
           make install
