@@ -87,6 +87,7 @@ jobs:
           --enable-libx264 \
           --extra-cflags="-I$X264_PREFIX/include" \
           --extra-ldflags="-L$X264_PREFIX/lib"
+          grep -n -A30 -B10 "x264" ffbuild/config.log
           
           make -j"$(nproc)"
 
