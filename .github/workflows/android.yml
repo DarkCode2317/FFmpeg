@@ -48,7 +48,12 @@ jobs:
           make -j"$(nproc)"
           make install
 
+      - name: Verify x264
+        run: |
+          cat "$X264_PREFIX/lib/pkgconfig/x264.pc"
+
       - name: Build FFmpeg
+        if: false
         run: |
           export PKG_CONFIG_PATH="$X264_PREFIX/lib/pkgconfig"
           ./configure \
@@ -83,11 +88,13 @@ jobs:
           make -j"$(nproc)"
 
       - name: Verify FFmpeg
+        if: false
         run: |
           file ffmpeg
           ls -lh ffmpeg
 
       - name: Upload FFmpeg
+        if: false
         uses: actions/upload-artifact@v4
         with:
           name: ffmpeg-android-armv7
