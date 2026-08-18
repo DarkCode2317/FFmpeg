@@ -57,6 +57,7 @@ jobs:
         
         run: |
           export PKG_CONFIG_PATH="$X264_PREFIX/lib/pkgconfig"
+          trap 'echo "===== x264 config.log ====="; grep -i -A40 -B20 "x264" ffbuild/config.log' ERR
           ./configure \
             --target-os=android \
             --arch=arm \
