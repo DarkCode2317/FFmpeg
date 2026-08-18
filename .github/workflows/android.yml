@@ -83,7 +83,7 @@ jobs:
           --disable-v4l2-m2m \
           --enable-jni \
           --enable-mediacodec \
-          --pkg-config-flags="--static"
+          --pkg-config-flags="--static" \
           --extra-cflags="-I$X264_PREFIX/include" \
           --extra-ldflags="-L$X264_PREFIX/lib" \
           --enable-gpl \
