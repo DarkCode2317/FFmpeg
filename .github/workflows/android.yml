@@ -29,10 +29,10 @@ jobs:
       - name: Build x264
         working-directory: x264
         run: |
+          CC="$TOOLCHAIN/bin/armv7a-linux-androideabi${ANDROID_API}-clang" \
+          CXX="$TOOLCHAIN/bin/armv7a-linux-androideabi${ANDROID_API}-clang++" \
           ./configure \
-          --host=arm-linux-androideabi \
-          --cross-prefix="$TOOLCHAIN/bin/armv7a-linux-androideabi${ANDROID_API}-" \
-          --sysroot="$TOOLCHAIN/sysroot" \
+          --host=arm-linux-androideabi \          --sysroot="$TOOLCHAIN/sysroot" \
           --prefix="$X264_PREFIX" \
           --enable-static \
           --disable-cli \
