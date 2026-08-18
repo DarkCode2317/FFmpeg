@@ -83,7 +83,6 @@ jobs:
           --enable-mediacodec \
           --extra-cflags="-I$X264_PREFIX/include" \
           --extra-ldflags="-L$X264_PREFIX/lib" \
-            \
           --enable-gpl \
           --enable-libx264
           make -j"$(nproc)"
