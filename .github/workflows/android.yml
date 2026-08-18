@@ -31,12 +31,12 @@ jobs:
         run: |
           ./configure \
           --host=arm-linux-androideabi \
-            --cross-prefix="$TOOLCHAIN/bin/armv7a-linux-androideabi${ANDROID_API}-" \
-            --sysroot="$TOOLCHAIN/sysroot" \
+          --cross-prefix="$TOOLCHAIN/bin/armv7a-linux-androideabi${ANDROID_API}-" \
+          --sysroot="$TOOLCHAIN/sysroot" \
             --prefix="$X264_PREFIX \
-            --enable-static \
-            --disable-cli \
-            --disable-opencl \
+          --enable-static \
+          --disable-cli \
+          --disable-opencl \
             --disable-bashcompletion \
             --disable-interlaced \
             --bit-depth=8 \
