@@ -36,6 +36,7 @@ jobs:
           --prefix="$X264_PREFIX" \
           --exec-prefix="$X264_PREFIX" \
           --enable-static \
+          --enable-pic \
           --disable-cli \
           --disable-opencl \
           --disable-bashcompletion \
