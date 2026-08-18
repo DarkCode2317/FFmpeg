@@ -57,7 +57,6 @@ jobs:
         
         run: |
           export PKG_CONFIG_PATH="$X264_PREFIX/lib/pkgconfig"
-          export PKG_CONFIG_LIBDIR="$X264_PREFIX/lib/pkgconfig"
           ./configure \
             --target-os=android \
             --arch=arm \
@@ -85,7 +84,7 @@ jobs:
           --enable-mediacodec \
           --enable-gpl \
           --enable-libx264 \
-          --extra-cflags="-I$X264_PREFIX/include" \
+        --pkg-config-flags="--static" \ --extra-cflags="-I$X264_PREFIX/include" \
           --extra-ldflags="-L$X264_PREFIX/lib"
           
           make -j"$(nproc)"
