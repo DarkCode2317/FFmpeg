@@ -57,7 +57,7 @@ jobs:
         
         run: |
           export PKG_CONFIG_PATH="$X264_PREFIX/lib/pkgconfig"
-
+          export PKG_CONFIG_LIBDIR="$X264_PREFIX/lib/pkgconfig"
           ./configure \
             --target-os=android \
             --arch=arm \
@@ -87,15 +87,6 @@ jobs:
           --enable-libx264 \
           --extra-cflags="-I$X264_PREFIX/include" \
           --extra-ldflags="-L$X264_PREFIX/lib"
-          STATUS=$?
-
-          echo "=== x264 config log ==="
-          grep -i -A30 -B10 "x264" ffbuild/config.log || true
-
-          echo "=== config.log tail ==="
-          tail -100 ffbuild/config.log || true
-
-          exit $STATUS
           
           make -j"$(nproc)"
 
