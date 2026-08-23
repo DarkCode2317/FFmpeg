@@ -12,10 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout FFmpeg
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Checkout x264
+        if: false
         uses: actions/checkout@v4
         with:
           repository: ${{ github.repository_owner }}/x264
