@@ -94,7 +94,35 @@ jobs:
 
       - name: Build ffprobe
         run: |
-
+          ./configure \
+            --target-os=android \
+            --arch=arm \
+            --cpu=armv7-a \
+            --enable-cross-compile \
+            --cc="$TOOLCHAIN/bin/armv7a-linux-androideabi${ANDROID_API}-clang" \
+            --cxx="$TOOLCHAIN/bin/armv7a-linux-androideabi${ANDROID_API}-clang++" \
+            --nm="$TOOLCHAIN/bin/llvm-nm" \
+            --ar="$TOOLCHAIN/bin/llvm-ar" \
+            --ranlib="$TOOLCHAIN/bin/llvm-ranlib" \
+            --strip="$TOOLCHAIN/bin/llvm-strip" \
+            --sysroot="$TOOLCHAIN/sysroot" \
+          --disable-ffmpeg \
+          --disable-ffplay \
+          --disable-doc \
+          --disable-debug \
+          --disable-avdevice \
+          --disable-indevs \
+          --disable-outdevs \
+          --disable-devices \
+          --disable-network \
+          --disable-cuda-llvm \
+          --disable-v4l2-m2m \
+          
+          --pkg-config-flags="--static" \
+          --extra-cflags="-I$X264_PREFIX/include" \
+          --extra-ldflags="-L$X264_PREFIX/lib"
+          
+          make -j"$(nproc)"
 
       - name: Verify FFmpeg
         
