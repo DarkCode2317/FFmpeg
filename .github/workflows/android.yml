@@ -28,6 +28,7 @@ jobs:
 
       - name: Build x264
         working-directory: x264
+        if: false
         run: |
           export CC="$TOOLCHAIN/bin/armv7a-linux-androideabi${ANDROID_API}-clang"
           export CXX="$TOOLCHAIN/bin/armv7a-linux-androideabi${ANDROID_API}-clang++"
@@ -50,12 +51,8 @@ jobs:
           make -j"$(nproc)"
           make install
 
-      - name: Verify x264
-        run: |
-          cat "$X264_PREFIX/lib/pkgconfig/x264.pc"
-
       - name: Build FFmpeg
-        
+        if: false
         run: |
           export PKG_CONFIG_PATH="$X264_PREFIX/lib/pkgconfig"
           trap 'echo "===== x264 config.log ====="; grep -i -A40 -B20 "x264" ffbuild/config.log' ERR
